@@ -5,7 +5,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import * as Sentry from '@sentry/browser';
 
 InertiaProgress.init({
-  color: '#ED8936',
+  color: '#e53e3e',
   showSpinner: true
 });
 

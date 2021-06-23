@@ -8,3 +8,22 @@
 
 /* Utilities */
 @import 'tailwindcss/utilities';
+
+@layer utilities {
+  .bg-primary {
+    @apply bg-red-600;
+  }
+  .bg-primary-darker {
+    @apply bg-red-700;
+  }
+  @variants focus {
+    .bg-primary-darker {
+      @apply bg-red-700;
+    }
+  }
+  @variants hover {
+    .bg-primary-darker {
+      @apply bg-red-700;
+    }
+  }
+}
