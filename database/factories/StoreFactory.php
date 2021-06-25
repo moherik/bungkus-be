@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Organization;
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OrganizationFactory extends Factory
+class StoreFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Organization::class;
+    protected $model = Store::class;
 
     /**
      * Define the model's default state.
@@ -23,13 +23,10 @@ class OrganizationFactory extends Factory
     {
         return [
             'name' => $this->faker->company,
-            'email' => $this->faker->companyEmail,
-            'phone' => $this->faker->tollFreePhoneNumber,
             'address' => $this->faker->streetAddress,
-            'city' => $this->faker->city,
-            'region' => $this->faker->state,
-            'country' => 'US',
-            'postal_code' => $this->faker->postcode,
+            'coordinate' => $this->faker->latitude . ',' . $this->faker->longitude,
+            'brand_img' => $this->faker->imageUrl(),
+            'banner_img' => $this->faker->imageUrl(),
         ];
     }
 }

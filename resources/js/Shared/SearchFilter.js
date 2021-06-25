@@ -62,19 +62,6 @@ export default () => {
             className="fixed inset-0 z-20 bg-black opacity-25"
           ></div>
           <div className="relative z-30 w-64 px-4 py-6 mt-2 bg-white rounded shadow-lg">
-            {filters.hasOwnProperty('role') && (
-              <SelectInput
-                className="mb-4"
-                label="Role"
-                name="role"
-                value={values.role}
-                onChange={handleChange}
-              >
-                <option value=""></option>
-                <option value="user">User</option>
-                <option value="owner">Owner</option>
-              </SelectInput>
-            )}
             <SelectInput
               label="Trashed"
               name="trashed"
@@ -110,7 +97,7 @@ export default () => {
           name="search"
           value={values.search}
           onChange={handleChange}
-          placeholder="Search…"
+          placeholder="Pencarian…"
         />
       </div>
       <button

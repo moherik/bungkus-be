@@ -12,6 +12,11 @@
 */
 
 // Auth
+
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\StoreController;
+use Illuminate\Support\Facades\Route;
+
 Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm')->middleware('guest');
 Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login')->middleware('guest');
 Route::post('logout')->name('logout')->uses('Auth\LoginController@logout');
@@ -39,6 +44,29 @@ Route::get('organizations/{organization}/edit')->name('organizations.edit')->use
 Route::put('organizations/{organization}')->name('organizations.update')->uses('OrganizationsController@update')->middleware('auth');
 Route::delete('organizations/{organization}')->name('organizations.destroy')->uses('OrganizationsController@destroy')->middleware('auth');
 Route::put('organizations/{organization}/restore')->name('organizations.restore')->uses('OrganizationsController@restore')->middleware('auth');
+
+// Stores
+Route::group(['middleware' => ['auth'], 'prefix' => 'stores', 'as' => 'stores.'], function() {
+    Route::get('/', [StoreController::class, 'index'])->name('index');
+    Route::get('/create', [StoreController::class, 'create'])->name('create');
+    Route::post('/', [StoreController::class, 'store'])->name('store');
+    Route::get('/{store}/edit', [StoreController::class, 'edit'])->name('edit');
+    Route::put('/{store}', [StoreController::class, 'update'])->name('update');
+    Route::put('/{store}/{status}', [StoreController::class, 'updateStatus'])->name('update-status');
+    Route::delete('/{store}', [StoreController::class, 'destroy'])->name('destroy');
+    Route::put('/{store}/restore', [StoreController::class, 'restore'])->name('restore');
+});
+
+// Menu
+Route::group(['middleware' => ['auth'], 'prefix' => 'menus', 'as' => 'menus.'], function() {
+    Route::post('/', [MenuController::class, 'store'])->name('store');
+    Route::put('/{menu}', [MenuController::class, 'update'])->name('update');
+    Route::put('/{menu}/{status}', [MenuController::class, 'updateStatus'])->name('update-status');
+    Route::delete('/{menu}', [MenuController::class, 'destroy'])->name('destroy');
+    Route::put('/{menu}/restore', [MenuController::class, 'restore'])->name('restore');
+
+    Route::put('/{menu}/move/{dest}', [MenuController::class, 'move'])->name('move');
+});
 
 // Contacts
 Route::get('contacts')->name('contacts')->uses('ContactsController@index')->middleware('remember', 'auth');
