@@ -19,7 +19,7 @@ export default function Layout({ title, children }) {
             <MainMenu className="flex-shrink-0 hidden w-56 p-4 overflow-y-auto bg-red-600 md:block" />
             {/* To reset scroll region (https://inertiajs.com/pages#scroll-regions) add `scroll-region="true"` to div below */}
             <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12">
-              <FlashMessages />
+              {/* <FlashMessages /> */}
               {children}
             </div>
           </div>

@@ -4,34 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MenuStoreRequest;
 use App\Http\Requests\MenuUpdateRequest;
-use App\Http\Resources\MenuCollection;
-use App\Http\Resources\MenuResource;
 use App\Models\Menu;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use App\Models\MenuCategory;
+use App\Models\Store;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\Facades\Image;
 
 class MenuController extends Controller
 {
-    public function store(MenuStoreRequest $request)
+    public function storeMenu(MenuStoreRequest $request, $categoryId)
     {
+        // dd($request->all());
         $data = $request->validated();
-
-        if($request->hasFile('image')) {
-            $image = $this->uploadImage($request->file('image'));
-            $data['image'] = $image->filename;
+        
+        $category = MenuCategory::where('id', $categoryId)->first();
+        if($category != null) {
+            if($request->hasFile('image')) {
+                $image = $this->uploadImage($request->file('image'));
+                $data['image'] = $image->filename;
+            }
+            $category->menus()->create($data);
+            return Redirect::back()->with('success', 'Menu baru berhasil ditambahkan.');
         }
 
-        Auth::user()->menus()->create($data);
-
-        return Redirect::route('menus.create')->with('success', 'Menu baru berhasil ditambahkan.');
+        return Redirect::back()->with('error', 'Terjadi kesalahan.');
     }
 
-    public function update(Menu $menu, MenuUpdateRequest $request)
+    public function storeCategory(Store $store, Request $request)
+    {
+        $maxOrder = (int)MenuCategory::max('order');
+        $store->menuCategories()->create([
+            'name' => $request->name,
+            'order' => $maxOrder+1,
+            'is_show' => $this->convertBoolToInt($request->is_show)
+        ]);
+
+        return Redirect::back()->with([
+            'success' => 'Berhasil menambahkan kategori menu baru.']);
+    }
+
+    public function updateMenu(Menu $menu, MenuUpdateRequest $request)
     {
         $data = $request->validated();
+        $data["is_show"] = $this->convertBoolToInt($data['is_show']);
 
         if($request->hasFile('image')) {
             $image = $this->uploadImage($request->file('image'));
@@ -43,36 +59,68 @@ class MenuController extends Controller
         return Redirect::back()->with('success', 'Menu berhasil diubah.');
     }
 
-    public function updateStatus(Menu $menu, $status)
+    public function updateStatusMenu(Menu $menu, $status)
     {
         $menu->update([
-            'is_show' => (int)filter_var($status, FILTER_VALIDATE_BOOLEAN)
+            'is_show' => $this->convertBoolToInt($status)
         ]);
+        return Redirect::back();
+    }
+
+    public function updateCategory(Request $request, $id)
+    {
+        MenuCategory::where('id', $id)->update([
+            'name' => $request->name,
+            'is_show' => $this->convertBoolToInt($request->is_show)
+        ]);
+        return Redirect::back()->with('success', 'Kategori menu berhasil diubah.');
+    }
+
+    public function reorderCategory(Request $request)
+    {
+        $categories = $request->all();
+        foreach($categories as $category)
+        {
+            MenuCategory::where('id', $category['id'])->update(['order' => $category['order']]);
+        }
 
         return Redirect::back();
     }
 
-    public function move(Menu $menu, $dest)
+    public function reorderMenu(Request $request)
     {
-        $menu->update([
-            'menu_category_id' => $dest
-        ]);
+        $menus = $request->all();
+
+        $sourceMenus = $menus["sourceMenus"];
+        $destMenus = $menus["destMenus"] ?? null;
+
+        foreach($sourceMenus as $menu)
+        {
+            Menu::where('id', $menu['id'])->update(['order' => $menu['order']]);
+        }
+
+        if(isset($destMenus) && $destMenus != null) {
+            foreach($destMenus as $menu)
+            {
+                Menu::where('id', $menu['id'])->update([
+                    'menu_category_id' => $menu['categoryId'],
+                    'order' => $menu['order']]);
+            }
+        }
 
         return Redirect::back();
     }
 
-    public function destroy(Menu $menu)
+    public function destroyMenu(Menu $menu)
     {
         $menu->delete();
-
         return Redirect::back()->with('success', 'Menu berhasil dihapus.');
     }
 
-    public function restore(Menu $menu)
+    public function destroyCategory($id)
     {
-        $menu->remenu();
-
-        return Redirect::back()->with('success', 'Menu berhasil dikembalikan.');
+        MenuCategory::where('id', $id)->delete();
+        return Redirect::back()->with('success', 'Menu berhasil dihapus.');
     }
 
     private function uploadImage($file, $filename = null, $width = 200, $height = 200, $format = 'jpg')
@@ -81,5 +129,10 @@ class MenuController extends Controller
             $filename = 'upload/' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . time();
         }
         return Image::make($file)->fit($width, $height)->save($filename, 60, $format);
+    }
+
+    private function convertBoolToInt($bool)
+    {
+        return (int)filter_var($bool, FILTER_VALIDATE_BOOLEAN);
     }
 }

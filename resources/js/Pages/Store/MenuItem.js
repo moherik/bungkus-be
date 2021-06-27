@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import Switch from '@/Shared/Switch';
 import Icon from '@/Shared/Icon';
 import classNames from 'classnames';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { InertiaLink } from '@inertiajs/inertia-react';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Inertia } from '@inertiajs/inertia';
-import { currency } from '@/utils';
+import { currency, fallbackImg } from '@/utils';
 
-export default ({ category, type }) => {
+export default ({ category, type, showMenuModal }) => {
   function handleOnSwitch(menus, id, e) {
     const index = menus.findIndex(x => x.id == id);
     menus[index].is_show = e.target.checked;
@@ -20,32 +19,44 @@ export default ({ category, type }) => {
       {(provided, snapshot) => (
         <ul
           ref={provided.innerRef}
-          className={classNames('flex flex-col gap-2')}
+          className={classNames('flex flex-col gap-2 p-2', {
+            'bg-red-100': snapshot.isDraggingOver
+          })}
           style={{ minHeight: '50px' }}
         >
           {category.menus.map((menu, index) => {
             return (
               <Draggable
-                key={category.id}
+                key={`menu${menu.id.toString()}`}
                 draggableId={`menu${menu.id.toString()}`}
                 index={index}
               >
                 {(provided, snapshot) => (
                   <li
                     className={classNames(
-                      'flex items-center p-2 focus:outline-none rounded shadow transition',
+                      'flex items-center p-2 focus:outline-none rounded',
                       {
-                        'bg-white': menu.is_show,
-                        'bg-gray-200': !menu.is_show,
-                        'bg-red-200 shadow-lg': snapshot.isDragging
+                        'bg-white shadow-sm': menu.is_show,
+                        'bg-gray-100': !menu.is_show,
+                        'bg-indigo-200 shadow-lg border-2 border-solid border-indigo-600':
+                          snapshot.isDragging
                       }
                     )}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <InertiaLink href="#" className="flex gap-3">
-                      <img src={menu.image} className="w-14 h-14 rounded" />
+                    <div
+                      onClick={() =>
+                        showMenuModal(route('menus.update-menu', menu.id), menu)
+                      }
+                      className="flex gap-3 cursor-pointer"
+                    >
+                      <img
+                        src={`/upload/${menu.image}`}
+                        onError={e => fallbackImg(e)}
+                        className="w-14 h-14 rounded"
+                      />
                       <div className="flex flex-col">
                         <div className="flex items-center">
                           <h3 className="text-sm font-medium">{menu.name}</h3>
@@ -59,10 +70,10 @@ export default ({ category, type }) => {
                         <span className="text-xs">{menu.description}</span>
                         <p className="text-sm">{currency(menu.price)}</p>
                       </div>
-                    </InertiaLink>
+                    </div>
                     <div className="ml-auto flex">
                       <Switch
-                        defaultChecked={menu.is_show}
+                        checked={menu.is_show}
                         onChange={e =>
                           handleOnSwitch(category.menus, menu.id, e)
                         }

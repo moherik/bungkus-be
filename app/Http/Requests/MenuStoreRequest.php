@@ -13,7 +13,7 @@ class MenuStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class MenuStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'description' => 'nullable',
+            'image' => 'nullable',
+            'price' => 'required',
+            'is_show' => 'required'
         ];
     }
 }

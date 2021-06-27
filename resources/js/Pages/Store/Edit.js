@@ -1,4 +1,4 @@
-import React, { createRef, useRef, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import Helmet from 'react-helmet';
 import { Inertia } from '@inertiajs/inertia';
 import { InertiaLink, usePage, useForm } from '@inertiajs/inertia-react';
@@ -25,7 +25,11 @@ const Edit = () => {
   const [processing, setProcessing] = useState(false);
   const [categories, setCategories] = useState(menuCategories);
 
-  function handleSubmit(e) {
+  useEffect(() => {
+    setCategories(menuCategories);
+  }, [menuCategories]);
+
+  const handleSubmit = e => {
     e.preventDefault();
     setProcessing(true);
     Inertia.post(
@@ -43,19 +47,23 @@ const Edit = () => {
         forceFormData: true
       }
     ).finally(() => setProcessing(false));
-  }
+  };
 
-  function destroy() {
+  const destroy = () => {
     if (confirm('Apakah anda yakin ingin menghapus data ini?')) {
       Inertia.delete(route('stores.destroy', store.id));
     }
-  }
+  };
 
-  function restore() {
+  const restore = () => {
     if (confirm('Apakah anda yakin ingin mengembalikan data ini?')) {
       Inertia.put(route('stores.restore', store.id));
     }
-  }
+  };
+
+  const refresh = () => {
+    Inertia.reload({ only: ['menuCategories'] });
+  };
 
   return (
     <div>
@@ -76,6 +84,18 @@ const Edit = () => {
         </TrashedMessage>
       )}
       <div className="flex flex-grow items-start flex-col-reverse lg:flex-row gap-6">
+        <div
+          className="w-full lg:w-2/4 overflow-y-auto"
+          style={{ height: '427px' }}
+        >
+          <MenuCategory
+            categories={categories}
+            setCategories={setCategories}
+            storeId={store.id}
+            refresh={refresh}
+          />
+        </div>
+
         <div className="w-full overflow-hidden bg-white rounded shadow">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap p-8 -mb-8 -mr-6">
@@ -142,18 +162,12 @@ const Edit = () => {
               <LoadingButton
                 loading={processing}
                 type="submit"
-                className="ml-auto btn-red"
+                className="ml-auto btn-red btn-lg"
               >
                 Simpan Perubahan
               </LoadingButton>
             </div>
           </form>
-        </div>
-        <div
-          className="w-full lg:w-2/4 overflow-y-auto shadow  bg-white rounded"
-          style={{ height: '427px' }}
-        >
-          <MenuCategory categories={categories} setCategories={setCategories} />
         </div>
       </div>
     </div>

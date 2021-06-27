@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { filesize } from '@/utils';
+import { uploadDir } from '@/constant';
 
 const Button = ({ text, onClick }) => (
   <button
@@ -11,25 +12,33 @@ const Button = ({ text, onClick }) => (
   </button>
 );
 
-export default ({ className, name, label, accept, errors = [], onChange }) => {
+export default ({
+  className,
+  name,
+  label,
+  accept,
+  image = null,
+  errors = [],
+  onChange
+}) => {
   const fileInput = useRef();
   const [file, setFile] = useState(null);
 
-  function browse() {
+  const browse = () => {
     fileInput.current.click();
-  }
+  };
 
-  function remove() {
+  const remove = () => {
     setFile(null);
     onChange(null);
     fileInput.current.value = null;
-  }
+  };
 
-  function handleFileChange(e) {
+  const handleFileChange = e => {
     const file = e.target.files[0];
     setFile(file);
     onChange(file);
-  }
+  };
 
   return (
     <div className={className}>
@@ -47,20 +56,36 @@ export default ({ className, name, label, accept, errors = [], onChange }) => {
           className="hidden"
           onChange={handleFileChange}
         />
-        {!file && (
+        {!file && !image && (
           <div className="p-2">
             <Button text="Browse" onClick={browse} />
           </div>
         )}
-        {file && (
-          <div className="flex items-center justify-between p-2">
-            <div className="flex-1 pr-1">
-              {file.name}
-              <span className="ml-1 text-xs text-gray-600">
-                ({filesize(file.size)})
-              </span>
-            </div>
-            <Button text="Remove" onClick={remove} />
+        {(file || image) && (
+          <div className="flex items-start gap-2 flex-col justify-between p-2">
+            <Button text="Hapus" onClick={remove} />
+
+            {file && (
+              <img
+                src={URL.createObjectURL(file)}
+                className="w-40 h-40 rounded-md object-center object-cover"
+              />
+            )}
+            {!file && image && (
+              <img
+                src={`${uploadDir}${image}`}
+                className="w-40 h-40 rounded-md object-center object-cover"
+              />
+            )}
+
+            {file && (
+              <div className="flex-1">
+                {file.name}
+                <span className="ml-1 text-xs text-gray-600">
+                  ({filesize(file.size)})
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>

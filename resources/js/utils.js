@@ -20,3 +20,7 @@ export function currency(angka, prefix = 'Rp.') {
       .join('')
   );
 }
+
+export const fallbackImg = (e, src = '/img/fallback-image.jpg') => {
+  e.target.src = src;
+};

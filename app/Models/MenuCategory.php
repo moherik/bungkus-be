@@ -10,11 +10,16 @@ class MenuCategory extends Model
 
     public function menus()
     {
-        return $this->hasMany(Menu::class);
+        return $this->hasMany(Menu::class)->orderBy('order');
     }
-
+    
     public function store()
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function getIsShowAttribute()
+    {
+        return $this->attributes['is_show'] > 0;
     }
 }

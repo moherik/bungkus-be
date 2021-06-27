@@ -1,19 +1,47 @@
+import classNames from 'classnames';
 import React, { useState } from 'react';
 
-export default ({ name, id, ...props }) => {
+export default ({ name, id, label = null, size = 'lg', ...props }) => {
   return (
-    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-      <input
-        type="checkbox"
-        name={name}
-        id={id}
-        {...props}
-        class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-      />
-      <label
-        for={name}
-        class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
-      ></label>
-    </div>
+    <>
+      <div
+        class={classNames(
+          'relative inline-block align-middle select-none transition duration-200 ease-in',
+          {
+            'w-8': size == 'sm',
+            'w-10': size == 'lg'
+          }
+        )}
+      >
+        <input
+          type="checkbox"
+          name={name}
+          id={id}
+          {...props}
+          class={classNames(
+            'toggle-checkbox absolute block rounded-full bg-white border-4 appearance-none cursor-pointer',
+            {
+              ' w-4 h-4': size == 'sm',
+              'w-6 h-6': size == 'lg'
+            }
+          )}
+        />
+        <label
+          for={name}
+          class={classNames(
+            'toggle-label block overflow-hidden rounded-full bg-gray-300 cursor-pointer',
+            {
+              'h-4': size == 'sm',
+              'h-6': size == 'lg'
+            }
+          )}
+        ></label>
+      </div>
+      {label != null && (
+        <label for="toggle" class="ml-2 text-sm text-gray-800">
+          {label}
+        </label>
+      )}
+    </>
   );
 };

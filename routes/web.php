@@ -59,13 +59,16 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'stores', 'as' => 'stores.']
 
 // Menu
 Route::group(['middleware' => ['auth'], 'prefix' => 'menus', 'as' => 'menus.'], function() {
-    Route::post('/', [MenuController::class, 'store'])->name('store');
-    Route::put('/{menu}', [MenuController::class, 'update'])->name('update');
-    Route::put('/{menu}/{status}', [MenuController::class, 'updateStatus'])->name('update-status');
-    Route::delete('/{menu}', [MenuController::class, 'destroy'])->name('destroy');
-    Route::put('/{menu}/restore', [MenuController::class, 'restore'])->name('restore');
+    Route::put('/category/reorder', [MenuController::class, 'reorderCategory'])->name('reorder-category');
+    Route::post('/{store}/category/create', [MenuController::class, 'storeCategory'])->name('store-category');
+    Route::put('/category/{id}/update', [MenuController::class, 'updateCategory'])->name('update-category');
+    Route::delete('/category/{id}/delete', [MenuController::class, 'destroyCategory'])->name('destroy-category');
 
-    Route::put('/{menu}/move/{dest}', [MenuController::class, 'move'])->name('move');
+    Route::put('/menu/reorder', [MenuController::class, 'reorderMenu'])->name('reorder-menu');
+    Route::post('/{categoryId}/menu/create', [MenuController::class, 'storeMenu'])->name('store-menu');
+    Route::put('/{menu}/update', [MenuController::class, 'updateMenu'])->name('update-menu');
+    Route::delete('/{menu}/delete', [MenuController::class, 'destroyMenu'])->name('destroy-menu');
+    Route::put('/{menu}/{status}', [MenuController::class, 'updateStatusMenu'])->name('update-status');
 });
 
 // Contacts
