@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { Inertia } from '@inertiajs/inertia';
 
 import DeleteButton from '@/Shared/DeleteButton';
 import FileInput from '@/Shared/FileInput';
 import LoadingButton from '@/Shared/LoadingButton';
 import Switch from '@/Shared/Switch';
 import TextInput from '@/Shared/TextInput';
-import { Inertia } from '@inertiajs/inertia';
-import { uploadDir } from '@/constant';
+
+import { MenuVariant } from './MenuVariant';
 
 export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
   const [processing, setProcessing] = useState(false);
@@ -99,6 +100,9 @@ export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
         </div>
         <div className="w-full lg:w-1/2 overflow-y-auto px-6 py-5 h-96 bg-gray-100">
           <h4 className="text-sm font-medium">Varian Menu</h4>
+          <div className="mt-2">
+            <MenuVariant />
+          </div>
         </div>
       </div>
       <div className="flex items-center px-6 py-5 border-t-2">

@@ -24,11 +24,12 @@ class CreateMenusTable extends Migration
 
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_category_id')->nullable()->constrained('menu_categories')->onDelete('CASCADE');
+            $table->foreignId('menu_category_id')->constrained('menu_categories')->onDelete('CASCADE');
             $table->string('name', 100);
             $table->string('description', 200)->nullable();
             $table->string('image')->nullable();
             $table->integer('price');
+            $table->json('variant')->nullable();
             $table->integer('order')->default(0);
             $table->boolean('is_show')->default(true);
             $table->timestamps();

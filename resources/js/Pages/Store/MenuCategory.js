@@ -5,20 +5,9 @@ import classNames from 'classnames';
 
 import Modal from '@/Shared/Modal';
 import MenuItem from './MenuItem';
-import TextInput from '@/Shared/TextInput';
-import LoadingButton from '@/Shared/LoadingButton';
-import DeleteButton from '@/Shared/DeleteButton';
-import Switch from '@/Shared/Switch';
-import FileInput from '@/Shared/FileInput';
 import { FormCategory } from './FormCategory';
 import { FormMenu } from './FormMenu';
-
-const reorder = (list, startIndex, endIndex) => {
-  const [removed] = list.splice(startIndex, 1);
-  list.splice(endIndex, 0, removed);
-
-  return list;
-};
+import { reorder } from '@/utils';
 
 export default ({ categories, setCategories, storeId, refresh }) => {
   const initialCategoryValue = {
@@ -37,7 +26,7 @@ export default ({ categories, setCategories, storeId, refresh }) => {
   };
 
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [showMenuModal, setShowMenuModal] = useState(false);
+  const [showMenuModal, setShowMenuModal] = useState(true);
   const [categoryValues, setCategoryValues] = useState(initialCategoryValue);
   const [menuValues, setMenuValues] = useState(initialMenuValue);
   const [formCategoryUrl, setFormCategoryUrl] = useState();
@@ -296,7 +285,9 @@ export default ({ categories, setCategories, storeId, refresh }) => {
 
       <Modal
         title={
-          menuValues.id == null ? 'Tambah Menu' : menuValues.name || 'Ubah Menu'
+          menuValues.id == null
+            ? 'Tambah Menu'
+            : `${menuValues.name} | Ubah` || 'Ubah Menu'
         }
         show={showMenuModal}
         setShow={setShowMenuModal}
