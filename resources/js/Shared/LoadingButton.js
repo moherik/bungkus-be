@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 
-export default ({ loading, className, children, ...props }) => {
+export const LoadingButton = ({ loading, className, children, ...props }) => {
   const classNames = cx(
     'flex items-center',
     'focus:outline-none',

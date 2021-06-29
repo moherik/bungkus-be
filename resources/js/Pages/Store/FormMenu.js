@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 
-import DeleteButton from '@/Shared/DeleteButton';
-import FileInput from '@/Shared/FileInput';
-import LoadingButton from '@/Shared/LoadingButton';
-import Switch from '@/Shared/Switch';
-import TextInput from '@/Shared/TextInput';
+import { DeleteButton } from '@/Shared/DeleteButton';
+import { FileInput } from '@/Shared/FileInput';
+import { LoadingButton } from '@/Shared/LoadingButton';
+import { Switch } from '@/Shared/Switch';
+import { TextInput } from '@/Shared/TextInput';
 
 import { MenuVariant } from './MenuVariant';
+import { currency, nullOrEmpty, percentage } from '@/utils';
 
 export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
   const [processing, setProcessing] = useState(false);
+  const [disbaledButton, setDisabledButton] = useState(true);
+
+  useEffect(() => {
+    if (!nullOrEmpty(values.name) && !nullOrEmpty(values.price)) {
+      setDisabledButton(false);
+    } else {
+      setDisabledButton(true);
+    }
+  }, [values]);
+
+  const handleSubmitForm = e => {
+    if (values.id == null) {
+      handleStore();
+    } else {
+      handleUpdate();
+    }
+  };
 
   const handleStore = e => {
-    e.preventDefault();
     setProcessing(true);
     Inertia.post(url, values)
       .then(() => refresh())
@@ -21,7 +38,6 @@ export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
   };
 
   const handleUpdate = e => {
-    e.preventDefault();
     setProcessing(true);
     Inertia.post(
       url,
@@ -60,11 +76,18 @@ export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
       is_show: e.target.checked
     }));
 
+  const handleSetVariant = variant =>
+    setValues(values => ({
+      ...values,
+      variant: variant
+    }));
+
   return (
-    <form onSubmit={values.id == null ? handleStore : handleUpdate}>
+    <form>
       <div className="flex w-full items-start h-96">
         <div class="w-full lg:w-1/2 overflow-y-auto h-full px-6 py-5">
           <TextInput
+            required
             className="w-full pb-2"
             name="name"
             id="name"
@@ -76,32 +99,58 @@ export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
             className="w-full pb-2"
             name="description"
             id="description"
-            value={values.description}
+            value={values.description || ''}
             label="Deskripsi"
             onChange={handleChange}
           />
-          <TextInput
-            className="w-full pb-2"
-            name="price"
-            id="price"
-            value={values.price}
-            label="Harga"
-            onChange={handleChange}
-          />
+          <div className="mb-4">
+            <div className="flex items-center">
+              <TextInput
+                required
+                name="price"
+                id="price"
+                value={values.price}
+                label="Harga"
+                type="number"
+                min="0"
+                onChange={handleChange}
+              />
+              <TextInput
+                name="discount"
+                id="discount"
+                value={values.discount || ''}
+                label="Diskon(%)"
+                max="100"
+                min="0"
+                type="number"
+                onChange={handleChange}
+              />
+            </div>
+            <p className="text-sm">
+              Harga Setelah Diskon:{' '}
+              <span className="font-medium">
+                {currency(percentage(values.price, values.discount || 0))}
+              </span>
+            </p>
+          </div>
           <FileInput
             className="w-full pb-4"
             id="image"
             name="image"
             accept="image/*"
             label="Gambar Menu"
+            value={values.image}
             onChange={handleFileChange}
-            image={values.image}
+            image={values.image || null}
           />
         </div>
         <div className="w-full lg:w-1/2 overflow-y-auto px-6 py-5 h-96 bg-gray-100">
-          <h4 className="text-sm font-medium">Varian Menu</h4>
+          <h4 className="text-sm font-medium">Opsi Menu</h4>
           <div className="mt-2">
-            <MenuVariant />
+            <MenuVariant
+              variant={values.variant}
+              setVariant={handleSetVariant}
+            />
           </div>
         </div>
       </div>
@@ -119,9 +168,11 @@ export const FormMenu = ({ values, setValues, url, finish, refresh }) => {
             onChange={handleSwitch}
           />
           <LoadingButton
+            disabled={disbaledButton}
             loading={processing}
-            type="submit"
+            type="button"
             className="btn-red btn-sm"
+            onClick={handleSubmitForm}
           >
             Simpan
           </LoadingButton>

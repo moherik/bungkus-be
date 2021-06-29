@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import TextInput from '@/Shared/TextInput';
-import LoadingButton from '@/Shared/LoadingButton';
-import DeleteButton from '@/Shared/DeleteButton';
+import { TextInput } from '@/Shared/TextInput';
+import { LoadingButton } from '@/Shared/LoadingButton';
+import { DeleteButton } from '@/Shared/DeleteButton';
 import { Inertia } from '@inertiajs/inertia';
-import Switch from '@/Shared/Switch';
+import { Switch } from '@/Shared/Switch';
 
 export const FormCategory = ({ values, setValues, url, finish, refresh }) => {
   const [processing, setProcessing] = useState(false);

@@ -29,6 +29,7 @@ class CreateMenusTable extends Migration
             $table->string('description', 200)->nullable();
             $table->string('image')->nullable();
             $table->integer('price');
+            $table->integer('discount')->nullable();
             $table->json('variant')->nullable();
             $table->integer('order')->default(0);
             $table->boolean('is_show')->default(true);

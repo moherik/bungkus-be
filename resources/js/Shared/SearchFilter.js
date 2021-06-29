@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-react';
 import { usePrevious } from 'react-use';
-import SelectInput from '@/Shared/SelectInput';
+import { SelectInput } from '@/Shared/SelectInput';
 import pickBy from 'lodash/pickBy';
 
-export default () => {
+export const SearchFilter = () => {
   const { filters } = usePage().props;
   const [opened, setOpened] = useState(false);
 
   const [values, setValues] = useState({
-    role: filters.role || '', // role is used only on users page
     search: filters.search || '',
     trashed: filters.trashed || ''
   });
@@ -19,7 +18,6 @@ export default () => {
 
   function reset() {
     setValues({
-      role: '',
       search: '',
       trashed: ''
     });

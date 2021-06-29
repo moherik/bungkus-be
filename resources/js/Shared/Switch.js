@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
 
-export default ({ name, id, label = null, size = 'lg', ...props }) => {
+export const Switch = ({ name, id, label = null, size = 'lg', ...props }) => {
   return (
     <>
       <div

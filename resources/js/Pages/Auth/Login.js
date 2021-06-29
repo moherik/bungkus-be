@@ -2,9 +2,9 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/inertia-react';
-import Logo from '@/Shared/Logo';
-import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
+import { Logo } from '@/Shared/Logo';
+import { LoadingButton } from '@/Shared/LoadingButton';
+import { TextInput } from '@/Shared/TextInput';
 
 export default () => {
   const { data, setData, errors, post, processing } = useForm({
@@ -73,7 +73,7 @@ export default () => {
             <LoadingButton
               type="submit"
               loading={processing}
-              className="btn-indigo"
+              className="btn-red btn-lg"
             >
               Login
             </LoadingButton>

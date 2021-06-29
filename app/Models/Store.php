@@ -14,10 +14,14 @@ class Store extends Model
         return $this->hasMany(MenuCategory::class)->orderBy('order');
     }
 
-    public function getIsOpenAttribute()
+    public function orders()
     {
-        return $this->attributes['is_open'] > 0;
+        return $this->hasMany(Order::class);
     }
+
+    protected $casts = [
+        'is_open' => 'boolean'
+    ];
 
     public function scopeFilter($query, array $filters)
     {

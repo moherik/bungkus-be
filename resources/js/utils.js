@@ -31,3 +31,10 @@ export const reorder = (list, startIndex, endIndex) => {
 
   return list;
 };
+
+export const percentage = (price, discount) => price - (discount / 100) * price;
+
+export const nullOrEmpty = value => {
+  if (value == '' || value == null) return true;
+  return false;
+};

@@ -28,6 +28,8 @@ class MenuStoreRequest extends FormRequest
             'description' => 'nullable',
             'image' => 'nullable',
             'price' => 'required',
+            'variant' => 'nullable',
+            'discount' => 'nullable',
             'is_show' => 'required'
         ];
     }

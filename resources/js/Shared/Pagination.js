@@ -35,7 +35,7 @@ const PageInactive = ({ label }) => {
   );
 };
 
-export default ({ links = [] }) => {
+export const Pagination = ({ links = [] }) => {
   // dont render, if there's only 1 page (previous, 1, next)
   if (links.length === 3) return null;
   return (

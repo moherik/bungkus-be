@@ -9,13 +9,8 @@ class Account extends Model
         return $this->hasMany(User::class);
     }
 
-    public function organizations()
+    public function stores()
     {
-        return $this->hasMany(Organization::class);
-    }
-
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class);
+        return $this->hasMany(Store::class);
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ onDelete, children }) => (
+export const DeleteButton = ({ onDelete, children }) => (
   <button
     className="text-red-600 text-sm focus:outline-none hover:underline"
     tabIndex="-1"

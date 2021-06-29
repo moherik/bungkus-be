@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default React.forwardRef(
+export const TextInput = React.forwardRef(
   ({ label, name, className, errors = [], ...props }, ref) => {
     return (
       <div className={className}>

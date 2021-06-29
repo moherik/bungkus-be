@@ -25,10 +25,9 @@ class StoreCreateRequest extends FormRequest
     {
         return [
             'name' => ['required','max:100'],
-            'address' => ['required'],
+            'address' => ['required','max:200'],
             'coordinate' => ['required'],
             'brand_img' => ['nullable'],
-            'banner_img' => ['nullable'],
             'is_open' => ['nullable'],
         ];
     }

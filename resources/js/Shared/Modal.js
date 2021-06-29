@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
+import { IoCloseOutline } from 'react-icons/io5';
 
-export default ({
+export const Modal = ({
   show,
   setShow,
   title,
@@ -32,7 +33,12 @@ export default ({
               })}
             >
               <h3 className="text-lg font-medium">{title}</h3>
-              <button onClick={closeModal}>X</button>
+              <button
+                onClick={closeModal}
+                className="outline-none focus:outline-none hover:text-red-800"
+              >
+                <IoCloseOutline className="text-2xl" />
+              </button>
             </div>
             <div
               className={classNames('overflow-y-auto', {

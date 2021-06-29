@@ -17,10 +17,9 @@ class CreateStoresTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('CASCADE');
             $table->string('name', 100);
-            $table->text('address');
+            $table->string('address', 200);
             $table->string('coordinate');
-            $table->string('brand_img');
-            $table->string('banner_img')->nullable();
+            $table->string('brand_img')->nullable();
             $table->boolean('is_open')->default(true);
             $table->timestamps();
             $table->softDeletes();

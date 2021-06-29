@@ -24,6 +24,7 @@ class StoreResource extends JsonResource
             'is_open' => $this->is_open,
             'deleted_at' => $this->deleted_at,
             'menu_categories' => $this->menuCategories()->orderBy('order')->get(),
+            'orders' => $this->orders()->orderBy('created_at', 'ASC')->get(),
         ];
     }
 }

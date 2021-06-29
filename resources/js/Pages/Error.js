@@ -2,7 +2,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 // import { usePage } from '@inertiajs/inertia-react';
 
-export default ({ status }) => {
+export const Error = ({ status }) => {
   // const { status } = usePage().props;
 
   const title = {

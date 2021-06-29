@@ -10,7 +10,6 @@ use App\Http\Resources\StoreResource;
 use Inertia\Inertia;
 use App\Models\Store;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use Intervention\Image\Facades\Image;
@@ -50,17 +49,23 @@ class StoreController extends Controller
             $data['banner_img'] = $bannerImage->filename;
         }
 
-        Auth::user()->stores()->create($data);
+        $store = Auth::user()->stores()->create($data);
+        $store->menuCategories()->create([
+            'name' => 'Menu Rekomendasi',
+            'order' => 1,
+            'is_show' => 0
+        ]);
 
-        return Redirect::route('stores.create')->with('success', 'Toko baru berhasil ditambahkan.');
+        return Redirect::back()->with('success', 'Toko baru berhasil ditambahkan.');
     }
 
-    public function edit(Store $store)
+    public function detail(Store $store)
     {
-        return Inertia::render('Store/Edit', [
+        return Inertia::render('Store/Detail', [
             'store' => new StoreResource($store),
             'menuCategories' => new MenuCategoryCollection(
-                $store->menuCategories)
+                $store->menuCategories),
+                
         ]);
     }
 

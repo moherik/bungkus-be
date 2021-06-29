@@ -12,7 +12,7 @@ const Button = ({ text, onClick }) => (
   </button>
 );
 
-export default ({
+export const FileInput = ({
   className,
   name,
   label,

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { InertiaLink } from '@inertiajs/inertia-react';
-import Logo from '@/Shared/Logo';
-import MainMenu from '@/Shared/MainMenu';
+import { Logo } from '@/Shared/Logo';
+import { MainMenu } from '@/Shared/MainMenu';
 
-export default () => {
+export const TopHeader = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   return (
-    <div className="flex items-center justify-between px-6 py-4 bg-primary-darker md:flex-shrink-0 md:w-56 md:justify-center">
-      <InertiaLink className="mt-1" href="/">
-        <Logo className="text-white fill-current" width="120" height="28" />
+    <div className="flex items-center justify-between px-6 py-4 bg-red-600 md:flex-shrink-0 md:w-56 md:justify-center">
+      <InertiaLink className="-mt-2" href="/">
+        {/* <Logo className="text-white fill-current" width="120" height="28" /> */}
+        <Logo className="text-white text-2xl" />
       </InertiaLink>
       <div className="relative md:hidden">
         <svg

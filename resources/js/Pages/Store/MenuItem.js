@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import Switch from '@/Shared/Switch';
-import Icon from '@/Shared/Icon';
+import { Switch } from '@/Shared/Switch';
 import classNames from 'classnames';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Inertia } from '@inertiajs/inertia';
-import { currency, fallbackImg } from '@/utils';
+import { currency, fallbackImg, percentage } from '@/utils';
+import { Image } from '@/Shared/Image';
+import { IoTrashOutline } from 'react-icons/io5';
 
-export default ({ category, type, showMenuModal }) => {
+export const MenuItem = ({ category, type, showMenuModal }) => {
   function handleOnSwitch(menus, id, e) {
     const index = menus.findIndex(x => x.id == id);
     menus[index].is_show = e.target.checked;
@@ -52,23 +53,30 @@ export default ({ category, type, showMenuModal }) => {
                       }
                       className="flex gap-3 cursor-pointer"
                     >
-                      <img
-                        src={`/upload/${menu.image}`}
-                        onError={e => fallbackImg(e)}
-                        className="w-14 h-14 rounded"
-                      />
+                      <Image src={menu.image} className="w-14 h-14 rounded" />
                       <div className="flex flex-col">
                         <div className="flex items-center">
                           <h3 className="text-sm font-medium">{menu.name}</h3>
                           {menu.deleted_at && (
-                            <Icon
-                              name="trash"
-                              className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
-                            />
+                            <IoTrashOutline className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current" />
                           )}
                         </div>
                         <span className="text-xs">{menu.description}</span>
-                        <p className="text-sm">{currency(menu.price)}</p>
+                        {menu.discount > 0 ? (
+                          <>
+                            <p className="text-sm font-medium text-red-600">
+                              {currency(percentage(menu.price, menu.discount))}
+                            </p>
+                            <p className="text-sm">
+                              <span className="line-through">
+                                {currency(menu.price)}
+                              </span>{' '}
+                              (-{menu.discount}%)
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-sm">{currency(menu.price)}</p>
+                        )}
                       </div>
                     </div>
                     <div className="ml-auto flex">

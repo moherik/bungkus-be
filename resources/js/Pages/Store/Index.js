@@ -1,36 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Inertia } from '@inertiajs/inertia';
-import { InertiaLink, usePage } from '@inertiajs/inertia-react';
-import Layout from '@/Shared/Layout';
-import Icon from '@/Shared/Icon';
-import SearchFilter from '@/Shared/SearchFilter';
-import Pagination from '@/Shared/Pagination';
-import TableItem from '@/Shared/TableItem';
-import Switch from '@/Shared/Switch';
+import { usePage } from '@inertiajs/inertia-react';
+
+import { Layout } from '@/Shared/Layout';
+import { SearchFilter } from '@/Shared/SearchFilter';
+import { Pagination } from '@/Shared/Pagination';
+import { TableItem } from '@/Shared/TableItem';
+import { Switch } from '@/Shared/Switch';
+import { FormStore } from './FormStore';
+import { Image } from '@/Shared/Image';
+import { IoTrashOutline, IoChevronForwardOutline } from 'react-icons/io5';
 
 const Index = () => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
   const { stores } = usePage().props;
   const {
-    data,
     meta: { links }
   } = stores;
 
-  function handleOnSwitch(id, e) {
+  const handleOnSwitch = (id, e) => {
     Inertia.put(route('stores.update-status', [id, e.target.checked]));
-  }
+  };
+
+  const handleShowModal = e => {
+    e.preventDefault();
+    setShowCreateModal(true);
+  };
+
+  const refresh = () => {
+    Inertia.reload({ only: ['stores'] });
+  };
 
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">Daftar Toko</h1>
       <div className="flex items-center justify-between mb-6">
         <SearchFilter />
-        <InertiaLink
+        <a
           className="btn-red btn-lg focus:outline-none"
-          href={route('stores.create')}
+          href="#"
+          onClick={handleShowModal}
         >
           <span>Tambah</span>
           <span className="hidden md:inline"> Toko</span>
-        </InertiaLink>
+        </a>
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
@@ -44,7 +58,7 @@ const Index = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map(
+            {stores.data.map(
               (
                 { id, name, address, brand_img, is_open, deleted_at },
                 index
@@ -55,24 +69,18 @@ const Index = () => {
                     className="hover:bg-gray-100 focus-within:bg-gray-100"
                   >
                     <td className="border-t">
-                      <TableItem link={route('stores.edit', id)}>
+                      <TableItem link={route('stores.detail', id)}>
                         {index + 1}
                       </TableItem>
                     </td>
                     <td className="border-t">
-                      <TableItem link={route('stores.edit', id)}>
-                        <img
-                          src={`upload/${brand_img}`}
-                          className="w-20 h-20 rounded"
-                        />
+                      <TableItem link={route('stores.detail', id)}>
+                        <Image src={brand_img} className="w-20 h-20 rounded" />
                         <div className="ml-3">
                           <div className="flex items-center">
                             <h3 className="text-lg font-medium">{name}</h3>
                             {deleted_at && (
-                              <Icon
-                                name="trash"
-                                className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
-                              />
+                              <IoTrashOutline className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current" />
                             )}
                           </div>
                           <span className="text-sm">{address}</span>
@@ -88,18 +96,15 @@ const Index = () => {
                       </TableItem>
                     </td>
                     <td className="w-px border-t">
-                      <TableItem link={route('stores.edit', id)}>
-                        <Icon
-                          name="cheveron-right"
-                          className="block w-6 h-6 text-gray-400 fill-current"
-                        />
+                      <TableItem link={route('stores.detail', id)}>
+                        <IoChevronForwardOutline className="block w-6 h-6 text-gray-400 fill-current" />
                       </TableItem>
                     </td>
                   </tr>
                 );
               }
             )}
-            {data.length === 0 && (
+            {stores.data.length === 0 && (
               <tr>
                 <td className="px-6 py-4 border-t" colSpan="4">
                   Tidak ada data.
@@ -110,6 +115,12 @@ const Index = () => {
         </table>
       </div>
       <Pagination links={links} />
+
+      <FormStore
+        show={showCreateModal}
+        setShow={setShowCreateModal}
+        refresh={refresh}
+      />
     </div>
   );
 };

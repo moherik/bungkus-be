@@ -1,101 +1,168 @@
-import React, { createRef, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-import { reorder } from '@/utils';
+import { currency, reorder } from '@/utils';
 
-const variants = [
-  {
-    id: 1,
-    name: 'Topping',
-    items: [
-      {
-        id: 1,
-        name: 'Telor',
-        price: 2000
-      },
-      {
-        id: 2,
-        name: 'Ceker',
-        price: 3000
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Pilihan',
-    items: [
-      {
-        id: 3,
-        name: 'Ekstra Saos',
-        price: 2000
-      },
-      {
-        id: 4,
-        name: 'Ekstra Topping',
-        price: 2000
-      }
-    ]
-  }
-];
+export const MenuVariant = ({ variant, setVariant }) => {
+  const [variants, setVariants] = useState(variant);
+  const [addGroupMode, setAddVariantMode] = useState(false);
+  const [addItemMode, setAddItemMode] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
 
-export const MenuVariant = () => {
-  const [groups, setGroups] = useState(variants);
-  const [addMode, setAddMode] = useState(false);
+  const initialItemForm = {
+    name: '',
+    price: ''
+  };
+  const [itemForm, setItemForm] = useState(initialItemForm);
 
   const addInputRef = useRef();
+  const addItemInputRef = useRef();
+
+  useEffect(() => {
+    setVariant(variants);
+  }, [variants]);
+
+  const resetVariant = () => {
+    setAddVariantMode(false);
+    setItemForm(initialItemForm);
+  };
 
   const handleAddMode = () => {
-    setAddMode(true);
+    setAddItemMode(false);
+    setAddVariantMode(true);
     setTimeout(() => {
       addInputRef.current.focus();
     });
   };
 
-  const handleKeyDownAddMode = e => {
+  const handleOnBlurVariant = e => {
     const value = e.target.value;
-    if (value == '') return;
+    if (value != '') {
+      handleAddVariant(value);
+    }
+
+    resetVariant();
+  };
+
+  const handleOnKeyDownVariant = e => {
+    const value = e.target.value;
 
     if (e.key == 'Enter') {
-      const newGroups = [...groups];
-      newGroups.push({
-        id: newGroups.length + 1,
-        name: value,
-        items: []
-      });
-      setGroups(newGroups);
-      setAddMode(false);
-    } else if (e.key == 'Escape') {
-      setAddMode(false);
+      if (value != '') {
+        handleAddVariant(value);
+      }
+    }
+    if (e.key == 'Escape') {
+      resetVariant();
     }
   };
 
-  const handleRemoveGroup = (e, index) => {
-    e.preventDefault();
-    const newGroups = [...groups];
-    newGroups.splice(index, 1);
-    setGroups(newGroups);
+  const handleAddVariant = value => {
+    let newVariants;
+
+    if (variants == null) {
+      newVariants = [];
+    } else {
+      newVariants = [...variants];
+    }
+
+    newVariants.push({
+      id: newVariants.length + 1,
+      name: value,
+      items: []
+    });
+
+    setVariants(newVariants);
+    resetVariant();
   };
 
-  const handleRemoveItem = (e, index) => {
+  const handleRemoveVariant = (e, index) => {
     e.preventDefault();
-    const newGroups = [...groups];
-    newGroups.splice(index, 1);
-    setGroups(newGroups);
+    const newVariants = [...variants];
+    newVariants.splice(index, 1);
+    setVariants(newVariants);
+  };
+
+  const handleAddItemMode = (e, variantId) => {
+    setAddVariantMode(false);
+    setSelectedVariantId(variantId);
+    setAddItemMode(true);
+    setTimeout(() => {
+      addItemInputRef.current.focus();
+    });
+  };
+
+  const focusItemName = () => {
+    setTimeout(() => {
+      addItemInputRef.current.focus();
+    });
+  };
+
+  const handleOnBlurItem = e => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      if (itemForm.name != '') {
+        handleAddItem();
+      }
+      setAddItemMode(false);
+      setSelectedVariantId(null);
+    }
+  };
+
+  const handleOnKeyDownItem = e => {
+    if (e.key == 'Enter') {
+      if (itemForm.name != '') handleAddItem();
+    }
+    if (e.key == 'Escape') {
+      setAddItemMode(false);
+      setSelectedVariantId(null);
+    }
+  };
+
+  const handleAddItem = () => {
+    const newVariants = [...variants];
+
+    const total = newVariants.reduce((acc, variant) => {
+      if (variant.items == null) return 0;
+      return acc + variant.items.length;
+    }, 0);
+
+    newVariants.forEach(variant => {
+      if (variant.id == selectedVariantId) {
+        if (variant.items == null) variant.items = [];
+        variant.items.push({
+          id: total + 1,
+          name: itemForm.name,
+          price: itemForm.price || null
+        });
+      }
+    });
+
+    setVariants(newVariants);
+    setItemForm(initialItemForm);
+    focusItemName();
+  };
+
+  const handleRemoveItem = (e, itemId) => {
+    e.preventDefault();
+    const newVariants = [...variants];
+    newVariants.forEach(variant => {
+      variant.items = variant.items.filter(item => item.id != itemId);
+    });
+    setVariants(newVariants);
   };
 
   const handleOnDragEnd = result => {
     if (!result.destination) return;
-    console.log(result);
 
     const sourceIndex = result.source.index;
     const destIndex = result.destination.index;
 
-    if (result.type === 'droppableGroup') {
-      const newGroups = reorder(groups, sourceIndex, destIndex);
+    if (result.type === 'droppableVariant') {
+      const newVariants = reorder(variants, sourceIndex, destIndex);
 
-      setGroups(newGroups);
+      setVariants(newVariants);
     } else if (result.type === 'droppableItem') {
-      const itemGroupMap = groups.reduce((acc, group) => {
+      const itemVariantMap = variants.reduce((acc, group) => {
         acc[group.id] = group.items;
         return acc;
       }, {});
@@ -103,22 +170,22 @@ export const MenuVariant = () => {
       const sourceParentId = parseInt(result.source.droppableId);
       const destParentId = parseInt(result.destination.droppableId);
 
-      const sourceItems = itemGroupMap[sourceParentId];
-      const destItems = itemGroupMap[destParentId];
+      const sourceItems = itemVariantMap[sourceParentId];
+      const destItems = itemVariantMap[destParentId];
 
-      let newGroups = [...groups];
+      let newVariants = [...variants];
 
       if (sourceParentId === destParentId) {
         const reorderedSubItems = reorder(sourceItems, sourceIndex, destIndex);
 
-        newGroups = newGroups.map(group => {
-          if (group.id === sourceParentId) {
-            group.items = reorderedSubItems;
+        newVariants = newVariants.map(variant => {
+          if (variant.id === sourceParentId) {
+            variant.items = reorderedSubItems;
           }
-          return group;
+          return variant;
         });
 
-        setGroups(newGroups);
+        setVariants(newVariants);
       } else {
         let newSourceItems = [...sourceItems];
         let newDestItems = [...destItems];
@@ -126,16 +193,16 @@ export const MenuVariant = () => {
         const [draggedItem] = newSourceItems.splice(sourceIndex, 1);
 
         newDestItems.splice(destIndex, 0, draggedItem);
-        newGroups = newGroups.map(group => {
-          if (group.id === sourceParentId) {
-            group.items = newSourceItems;
-          } else if (group.id === destParentId) {
-            group.items = newDestItems;
+        newVariants = newVariants.map(variant => {
+          if (variant.id === sourceParentId) {
+            variant.items = newSourceItems;
+          } else if (variant.id === destParentId) {
+            variant.items = newDestItems;
           }
-          return group;
+          return variant;
         });
 
-        setGroups(newGroups);
+        setVariants(newVariants);
       }
     }
   };
@@ -143,107 +210,162 @@ export const MenuVariant = () => {
   return (
     <>
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="group" type="droppableGroup">
+        <Droppable droppableId="variant" type="droppableVariant">
           {(provided, _snapshot) => (
             <div
               className="w-full h-full"
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {groups.map((group, index) => (
-                <Draggable
-                  key={group.id.toString()}
-                  draggableId={group.id.toString()}
-                  index={index}
-                >
-                  {(provided, _snapshot) => (
-                    <div
-                      className="mb-2"
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <div className="w-full bg-white px-3 py-2 rounded border">
-                        <div class="flex items-center justify-between">
-                          <p className="text-sm">{group.name}</p>
-                          <a
-                            href="#"
-                            className="text-sm cursor-pointer hover:underline hover:text-red-600"
-                            onClick={e => handleRemoveGroup(e, index)}
+              {variants != null &&
+                variants.map((variant, index) => (
+                  <Draggable
+                    key={variant.id.toString()}
+                    draggableId={variant.id.toString()}
+                    index={index}
+                  >
+                    {(provided, _snapshot) => (
+                      <div
+                        className="mb-2"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <div className="w-full bg-white px-3 py-2 rounded border">
+                          <div class="flex items-center justify-between">
+                            <p className="text-sm">{variant.name}</p>
+                            <a
+                              href="#"
+                              className="text-sm cursor-pointer hover:underline hover:text-red-600"
+                              onClick={e => handleRemoveVariant(e, index)}
+                            >
+                              X
+                            </a>
+                          </div>
+                          <Droppable
+                            droppableId={variant.id.toString()}
+                            type="droppableItem"
                           >
-                            X
-                          </a>
-                        </div>
-                        <Droppable
-                          droppableId={group.id.toString()}
-                          type="droppableItem"
-                        >
-                          {(provided, _snapshot) => (
-                            <div className="w-full" ref={provided.innerRef}>
-                              {group.items.map((item, index) => (
-                                <Draggable
-                                  key={`item${item.id.toString()}`}
-                                  draggableId={`item${item.id.toString()}`}
-                                  index={index}
-                                >
-                                  {(provided, _snapshot) => (
-                                    <div
-                                      className="w-full bg-white px-3 py-2 mt-1 rounded border"
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
+                            {(provided, _snapshot) => (
+                              <div className="w-full" ref={provided.innerRef}>
+                                {variant.items != null &&
+                                  variant.items.map((item, index) => (
+                                    <Draggable
+                                      key={`item${item.id.toString()}`}
+                                      draggableId={`item${item.id.toString()}`}
+                                      index={index}
                                     >
-                                      <div className="flex items-center justify-between">
-                                        <p className="text-sm">{item.name}</p>
-                                        <a
-                                          href="#"
-                                          className="text-sm cursor-pointer hover:underline hover:text-red-600"
-                                          onClick={e =>
-                                            handleRemoveItem(e, index)
-                                          }
+                                      {(provided, _snapshot) => (
+                                        <div
+                                          className="w-full bg-white px-3 py-2 mt-1 rounded border"
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
                                         >
-                                          X
-                                        </a>
-                                      </div>
-                                      {provided.placeholder}
-                                    </div>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {provided.placeholder}
+                                          <div className="flex items-center justify-between gap-4">
+                                            <div className="flex items-center justify-between w-full">
+                                              <div className="text-sm">
+                                                {item.name}
+                                              </div>
+                                              <div className="text-sm font-medium">
+                                                {item.price != null &&
+                                                  currency(item.price)}
+                                              </div>
+                                            </div>
+                                            <a
+                                              href="#"
+                                              className="text-sm cursor-pointer hover:underline hover:text-red-600"
+                                              onClick={e =>
+                                                handleRemoveItem(e, item.id)
+                                              }
+                                            >
+                                              X
+                                            </a>
+                                          </div>
+                                          {provided.placeholder}
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+
+                          {!addItemMode || selectedVariantId != variant.id ? (
+                            <div
+                              className="w-full bg-white mt-1 p-2 text-sm text-center rounded border cursor-pointer hover:bg-red-300"
+                              onClick={e => handleAddItemMode(e, variant.id)}
+                            >
+                              Tambah Item
                             </div>
+                          ) : (
+                            (addItemMode ||
+                              selectedVariantId == variant.id) && (
+                              <div
+                                className="flex rounded bg-white overflow-hidden mt-1 border-red-600 justifty-center border-2 border-solid"
+                                onBlur={handleOnBlurItem}
+                              >
+                                <input
+                                  className="w-full text-sm px-3 py-2 outline-none"
+                                  autoComplete="off"
+                                  name="name"
+                                  id="name"
+                                  placeholder="Item"
+                                  ref={addItemInputRef}
+                                  onKeyDown={handleOnKeyDownItem}
+                                  value={itemForm.name}
+                                  onChange={e =>
+                                    setItemForm(values => ({
+                                      ...values,
+                                      name: e.target.value
+                                    }))
+                                  }
+                                />
+                                <input
+                                  className="w-full text-sm px-3 py-2 border-l outline-none"
+                                  autoComplete="off"
+                                  name="price"
+                                  id="price"
+                                  placeholder="Harga (opsional)"
+                                  type="number"
+                                  value={itemForm.price}
+                                  onKeyDown={handleOnKeyDownItem}
+                                  onChange={e =>
+                                    setItemForm(values => ({
+                                      ...values,
+                                      price: e.target.value
+                                    }))
+                                  }
+                                />
+                              </div>
+                            )
                           )}
-                        </Droppable>
+                        </div>
+                        {provided.placeholder}
                       </div>
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+                    )}
+                  </Draggable>
+                ))}
               {provided.placeholder}
 
-              {!addMode ? (
+              {!addGroupMode ? (
                 <div
-                  className="w-full bg-white mt-2 p-2 text-sm text-center rounded border cursor-pointer hover:bg-gray-100"
+                  className="w-full bg-white mt-2 p-2 text-sm text-center rounded border cursor-pointer hover:bg-red-300"
                   onClick={handleAddMode}
                 >
                   Tambah Varian
                 </div>
               ) : (
-                <div>
-                  <input
-                    onKeyDown={handleKeyDownAddMode}
-                    className="w-full text-sm border px-3 py-2 rounded outline-none"
-                    name="price"
-                    id="price"
-                    placeholder="Contoh: Topping"
-                    ref={addInputRef}
-                  />
-                  <p className="mt-2 text-xs text-indigo-600">
-                    Info: klik enter untuk menyimpan, klik esc untuk
-                    membatalkan.
-                  </p>
-                </div>
+                <input
+                  className="w-full text-sm px-3 py-2 rounded outline-none bg-white overflow-hidden border-red-600 justifty-center border-2 border-solid"
+                  name="price"
+                  id="price"
+                  placeholder="Contoh: Topping"
+                  ref={addInputRef}
+                  onBlur={handleOnBlurVariant}
+                  onKeyDown={handleOnKeyDownVariant}
+                />
               )}
             </div>
           )}

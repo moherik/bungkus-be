@@ -14,11 +14,6 @@ class Menu extends Model
         return $this->belongsTo(MenuCategory::class);
     }
 
-    public function getIsShowAttribute()
-    {
-        return $this->attributes['is_show'] > 0;
-    }
-
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
@@ -31,4 +26,9 @@ class Menu extends Model
             }
         });
     }
+
+    protected $casts = [
+        'is_show' => 'boolean',
+        'variant' => 'array'
+    ];
 }

@@ -46,7 +46,7 @@ const ButtonClose = ({ color, onClick }) => {
   );
 };
 
-export default () => {
+export const FlashMessages = () => {
   const [visible, setVisible] = useState(true);
   const { flash, errors } = usePage().props;
   const numOfErrors = Object.keys(errors).length;

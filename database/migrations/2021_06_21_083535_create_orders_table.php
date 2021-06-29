@@ -13,20 +13,13 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 20);
-            $table->string('icon');
-            $table->boolean('is_available')->default(true);
-            $table->timestamps();
-        });
-
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('CASCADE');
-            $table->foreignId('order_type_id')->constrained('order_types');
             $table->integer('quantity')->default(1);
             $table->string('order_note', 100);
+            $table->enum('order_type', ['PICKUP','DINEIN'])->default('PICKUP');
             $table->timestamp('order_schedule')->nullable();
             $table->integer('tips')->default(0)->nullable();
             $table->timestamps();

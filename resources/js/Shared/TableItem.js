@@ -1,6 +1,6 @@
 import { InertiaLink } from '@inertiajs/inertia-react';
 
-export default ({ link = null, children }) => {
+export const TableItem = ({ link = null, children }) => {
   if (link != null) {
     return (
       <InertiaLink

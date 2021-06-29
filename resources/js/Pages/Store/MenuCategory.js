@@ -3,13 +3,18 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Inertia } from '@inertiajs/inertia';
 import classNames from 'classnames';
 
-import Modal from '@/Shared/Modal';
-import MenuItem from './MenuItem';
+import { Modal } from '@/Shared/Modal';
+import { MenuItem } from './MenuItem';
 import { FormCategory } from './FormCategory';
 import { FormMenu } from './FormMenu';
 import { reorder } from '@/utils';
 
-export default ({ categories, setCategories, storeId, refresh }) => {
+export const MenuCategory = ({
+  categories,
+  setCategories,
+  storeId,
+  refresh
+}) => {
   const initialCategoryValue = {
     id: null,
     name: '',
@@ -22,11 +27,13 @@ export default ({ categories, setCategories, storeId, refresh }) => {
     description: '',
     price: '',
     image: null,
+    variant: [],
+    discount: '',
     is_show: false
   };
 
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [showMenuModal, setShowMenuModal] = useState(true);
+  const [showMenuModal, setShowMenuModal] = useState(false);
   const [categoryValues, setCategoryValues] = useState(initialCategoryValue);
   const [menuValues, setMenuValues] = useState(initialMenuValue);
   const [formCategoryUrl, setFormCategoryUrl] = useState();
@@ -59,6 +66,8 @@ export default ({ categories, setCategories, storeId, refresh }) => {
         description: menu.description,
         price: menu.price,
         image: menu.image,
+        variant: menu.variant,
+        discount: menu.discount,
         is_show: menu.is_show
       });
     } else {
@@ -184,7 +193,7 @@ export default ({ categories, setCategories, storeId, refresh }) => {
         <Droppable droppableId="droppable" type="droppableItem">
           {(provided, snapshot) => (
             <div
-              className={classNames({
+              className={classNames('p-4 bg-gray-300', {
                 'bg-red-100 transition': snapshot.isDraggingOver
               })}
               {...provided.droppableProps}
@@ -202,7 +211,7 @@ export default ({ categories, setCategories, storeId, refresh }) => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         className={classNames(
-                          'flex flex-col bg-gray-100 rounded mb-2 overflow-hidden',
+                          'flex flex-col bg-gray-100 rounded mb-3 overflow-hidden',
                           {
                             'bg-gray-400 shadow-lg': snapshot.isDragging,
                             'opacity-75': category.is_show <= 0
@@ -253,6 +262,9 @@ export default ({ categories, setCategories, storeId, refresh }) => {
                   </Draggable>
                 );
               })}
+
+              {provided.placeholder}
+
               <div
                 className="h-10 rounded shadow bg-white items-center justify-center flex hover:bg-indigo-100 transition cursor-pointer"
                 onClick={() =>
