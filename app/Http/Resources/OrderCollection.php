@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class MenuCollection extends ResourceCollection
+class OrderCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,7 +15,7 @@ class MenuCollection extends ResourceCollection
     public function toArray($request)
     {
         return $this->collection->map->only(
-            'id', 'name', 'description', 'image', 'price', 'order', 'is_show'
+            'id', 'customer', 'order_note', 'order_type', 'order_schedule', 'status', 'tips', 'carts'
         );
     }
 }

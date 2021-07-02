@@ -4,8 +4,17 @@ import { LoadingButton } from '@/Shared/LoadingButton';
 import { DeleteButton } from '@/Shared/DeleteButton';
 import { Inertia } from '@inertiajs/inertia';
 import { Switch } from '@/Shared/Switch';
+import { Modal } from '@/Shared/Modal';
 
-export const FormCategory = ({ values, setValues, url, finish, refresh }) => {
+export const FormCategory = ({
+  show,
+  setShow,
+  values,
+  setValues,
+  url,
+  finish,
+  refresh
+}) => {
   const [processing, setProcessing] = useState(false);
 
   const handleStore = e => {
@@ -13,7 +22,10 @@ export const FormCategory = ({ values, setValues, url, finish, refresh }) => {
     setProcessing(true);
     Inertia.post(url, values)
       .then(() => refresh())
-      .finally(() => finish());
+      .finally(() => {
+        setProcessing(false);
+        finish();
+      });
   };
 
   const handleUpdate = e => {
@@ -21,7 +33,10 @@ export const FormCategory = ({ values, setValues, url, finish, refresh }) => {
     setProcessing(true);
     Inertia.put(url, values)
       .then(() => refresh())
-      .finally(() => finish());
+      .finally(() => {
+        setProcessing(false);
+        finish();
+      });
   };
 
   const handleDestroy = id => {
@@ -49,36 +64,43 @@ export const FormCategory = ({ values, setValues, url, finish, refresh }) => {
   };
 
   return (
-    <form onSubmit={values.id == null ? handleStore : handleUpdate}>
-      <TextInput
-        className="w-full pb-2"
-        name="name"
-        id="name"
-        value={values.name}
-        placeholder="Nama kategori menu"
-        onChange={handleChange}
-      />
-      <Switch
-        name="is_show"
-        id="is_show"
-        label="Tampilkan?"
-        defaultChecked={values.is_show}
-        onChange={handleSwitch}
-      />
-      <div className="flex items-center mt-4">
-        {values.id != null && (
-          <DeleteButton onDelete={() => handleDestroy(values.id)}>
-            Hapus?
-          </DeleteButton>
-        )}
-        <LoadingButton
-          type="submit"
-          loading={processing}
-          className="ml-auto btn-red btn-sm"
-        >
-          Simpan
-        </LoadingButton>
-      </div>
-    </form>
+    <Modal
+      size="sm"
+      title={values.id == null ? 'Tambah Kategori' : 'Ubah Kategori'}
+      show={show}
+      setShow={setShow}
+    >
+      <form onSubmit={values.id == null ? handleStore : handleUpdate}>
+        <TextInput
+          className="w-full pb-2"
+          name="name"
+          id="name"
+          value={values.name}
+          placeholder="Nama kategori menu"
+          onChange={handleChange}
+        />
+        <Switch
+          name="is_show"
+          id="is_show"
+          label="Tampilkan?"
+          defaultChecked={values.is_show}
+          onChange={handleSwitch}
+        />
+        <div className="flex items-center mt-4">
+          {values.id != null && (
+            <DeleteButton onDelete={() => handleDestroy(values.id)}>
+              Hapus?
+            </DeleteButton>
+          )}
+          <LoadingButton
+            type="submit"
+            loading={processing}
+            className="ml-auto btn-red btn-sm"
+          >
+            Simpan
+          </LoadingButton>
+        </div>
+      </form>
+    </Modal>
   );
 };

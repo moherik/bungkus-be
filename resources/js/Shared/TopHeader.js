@@ -9,7 +9,7 @@ export const TopHeader = () => {
     <div className="flex items-center justify-between px-6 py-4 bg-red-600 md:flex-shrink-0 md:w-56 md:justify-center">
       <InertiaLink className="-mt-2" href="/">
         {/* <Logo className="text-white fill-current" width="120" height="28" /> */}
-        <Logo className="text-white text-2xl" />
+        <Logo className="text-white text-2xl font-medium" />
       </InertiaLink>
       <div className="relative md:hidden">
         <svg

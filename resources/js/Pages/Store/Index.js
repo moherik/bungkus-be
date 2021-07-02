@@ -74,7 +74,10 @@ const Index = () => {
                       </TableItem>
                     </td>
                     <td className="border-t">
-                      <TableItem link={route('stores.detail', id)}>
+                      <TableItem
+                        link={route('stores.detail', id)}
+                        className="items-center"
+                      >
                         <Image src={brand_img} className="w-20 h-20 rounded" />
                         <div className="ml-3">
                           <div className="flex items-center">

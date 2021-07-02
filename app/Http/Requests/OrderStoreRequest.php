@@ -24,7 +24,18 @@ class OrderStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            
+            'store_id' => 'required',
+            'order_type' => 'required',
+            'order_schedule' => 'nullable',
+            'order_note' => 'nullable',
+            'tips' => 'nullable',
+            'order_carts' => 'required|array',
+            'order_carts.*.menu_id' => 'required',
+            'order_carts.*.menu_name' => 'required|required:100',
+            'order_carts.*.variant_items' => 'nullable',
+            'order_carts.*.special_instruction' => 'nullable|max:100',
+            'order_carts.*.price' => 'required',
+            'order_carts.*.quantity' => 'required',
         ];
     }
 }

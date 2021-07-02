@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCreateRequest;
 use App\Http\Requests\StoreUpdateRequest;
 use App\Http\Resources\MenuCategoryCollection;
+use App\Http\Resources\OrderCollection;
 use App\Http\Resources\StoreCollection;
 use App\Http\Resources\StoreResource;
 use Inertia\Inertia;
@@ -63,6 +64,7 @@ class StoreController extends Controller
     {
         return Inertia::render('Store/Detail', [
             'store' => new StoreResource($store),
+            'order' => new OrderCollection($store->orders()->orderBy('created_at', 'DESC')->get()),
             'menuCategories' => new MenuCategoryCollection(
                 $store->menuCategories),
                 

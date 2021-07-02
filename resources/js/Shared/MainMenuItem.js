@@ -5,12 +5,12 @@ import classNames from 'classnames';
 export const MainMenuItem = ({ icon, link, baseRoute, text }) => {
   const isActive = route().current(baseRoute + '*');
 
-  const menuClasses = classNames('flex items-center group p-3', {
+  const menuClasses = classNames('flex gap-4 items-center group p-3', {
     'bg-primary-darker rounded': isActive,
     'hover:bg-primary-darker rounded': !isActive
   });
 
-  const iconClasses = classNames('w-4 h-4 mr-2', {
+  const iconClasses = classNames('text-xl w-4 h-4 mr-2', {
     'text-white fill-current': isActive,
     'text-red-200 group-hover:text-white fill-current': !isActive
   });
@@ -23,7 +23,7 @@ export const MainMenuItem = ({ icon, link, baseRoute, text }) => {
   return (
     <div className="mb-1">
       <InertiaLink href={route(link)} className={menuClasses}>
-        {icon}
+        <div className={iconClasses}>{icon}</div>
         <div className={textClasses}>{text}</div>
       </InertiaLink>
     </div>

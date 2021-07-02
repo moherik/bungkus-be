@@ -17,10 +17,10 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->foreignId('store_id')->constrained('stores');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('CASCADE');
-            $table->integer('quantity')->default(1);
-            $table->string('order_note', 100);
-            $table->enum('order_type', ['PICKUP','DINEIN'])->default('PICKUP');
+            $table->enum('order_type', ['PICKUP','DINEIN', 'DELIVERY'])->default('PICKUP');
+            $table->enum('status', ['PENDING', 'PROCESS', 'CANCEL', 'SUCCESS'])->default('PENDING');
             $table->timestamp('order_schedule')->nullable();
+            $table->string('order_note', 100)->nullable();
             $table->integer('tips')->default(0)->nullable();
             $table->timestamps();
         });
@@ -30,9 +30,10 @@ class CreateOrdersTable extends Migration
             $table->foreignId('order_id')->constrained('orders')->onDelete('CASCADE');
             $table->foreignId('menu_id')->constrained('menus');
             $table->string('menu_name', 100);
-            $table->json('variant_items')->nullable(true);
-            $table->string('special_instruction', 100);
             $table->integer('price');
+            $table->json('variant_items')->nullable(true);
+            $table->string('special_instruction', 100)->nullable();
+            $table->integer('quantity')->default(1);
             $table->timestamps();
         });
     }
@@ -44,7 +45,6 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_type');
         Schema::dropIfExists('orders');
         Schema::dropIfExists('order_cart');
     }

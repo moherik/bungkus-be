@@ -3,8 +3,9 @@ import { Switch } from '@/Shared/Switch';
 import classNames from 'classnames';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Inertia } from '@inertiajs/inertia';
-import { currency, fallbackImg, percentage } from '@/utils';
+import { currency, percentage } from '@/utils';
 import { Image } from '@/Shared/Image';
+
 import { IoTrashOutline } from 'react-icons/io5';
 
 export const MenuItem = ({ category, type, showMenuModal }) => {
@@ -55,12 +56,7 @@ export const MenuItem = ({ category, type, showMenuModal }) => {
                     >
                       <Image src={menu.image} className="w-14 h-14 rounded" />
                       <div className="flex flex-col">
-                        <div className="flex items-center">
-                          <h3 className="text-sm font-medium">{menu.name}</h3>
-                          {menu.deleted_at && (
-                            <IoTrashOutline className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current" />
-                          )}
-                        </div>
+                        <h3 className="text-sm font-medium">{menu.name}</h3>
                         <span className="text-xs">{menu.description}</span>
                         {menu.discount > 0 ? (
                           <>

@@ -5,7 +5,7 @@ export const Switch = ({ name, id, label = null, size = 'lg', ...props }) => {
   return (
     <>
       <div
-        class={classNames(
+        className={classNames(
           'relative inline-block align-middle select-none transition duration-200 ease-in',
           {
             'w-8': size == 'sm',
@@ -18,7 +18,7 @@ export const Switch = ({ name, id, label = null, size = 'lg', ...props }) => {
           name={name}
           id={id}
           {...props}
-          class={classNames(
+          className={classNames(
             'toggle-checkbox absolute block rounded-full bg-white border-4 appearance-none cursor-pointer',
             {
               ' w-4 h-4': size == 'sm',
@@ -27,8 +27,8 @@ export const Switch = ({ name, id, label = null, size = 'lg', ...props }) => {
           )}
         />
         <label
-          for={name}
-          class={classNames(
+          htmlFor={name}
+          className={classNames(
             'toggle-label block overflow-hidden rounded-full bg-gray-300 cursor-pointer',
             {
               'h-4': size == 'sm',
@@ -38,7 +38,7 @@ export const Switch = ({ name, id, label = null, size = 'lg', ...props }) => {
         ></label>
       </div>
       {label != null && (
-        <label for="toggle" class="ml-2 text-sm text-gray-800">
+        <label htmlFor="toggle" className="ml-2 text-sm text-gray-800">
           {label}
         </label>
       )}

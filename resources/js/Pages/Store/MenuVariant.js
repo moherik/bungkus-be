@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { IoCloseOutline } from 'react-icons/io5';
 
 import { currency, reorder } from '@/utils';
 
@@ -104,7 +105,6 @@ export const MenuVariant = ({ variant, setVariant }) => {
         handleAddItem();
       }
       setAddItemMode(false);
-      setSelectedVariantId(null);
     }
   };
 
@@ -114,23 +114,23 @@ export const MenuVariant = ({ variant, setVariant }) => {
     }
     if (e.key == 'Escape') {
       setAddItemMode(false);
-      setSelectedVariantId(null);
     }
   };
 
   const handleAddItem = () => {
     const newVariants = [...variants];
 
-    const total = newVariants.reduce((acc, variant) => {
-      if (variant.items == null) return 0;
-      return acc + variant.items.length;
-    }, 0);
+    const maxPerRows = newVariants.map(variant => {
+      return variant.items.reduce((max, items) => Math.max(max, items.id), 0);
+    });
+
+    const max = Math.max.apply(Math, maxPerRows);
 
     newVariants.forEach(variant => {
       if (variant.id == selectedVariantId) {
         if (variant.items == null) variant.items = [];
         variant.items.push({
-          id: total + 1,
+          id: max + 1,
           name: itemForm.name,
           price: itemForm.price || null
         });
@@ -149,6 +149,13 @@ export const MenuVariant = ({ variant, setVariant }) => {
       variant.items = variant.items.filter(item => item.id != itemId);
     });
     setVariants(newVariants);
+  };
+
+  const handleOnDragStart = () => {
+    setAddItemMode(false);
+    setAddVariantMode(false);
+    setSelectedVariantId(null);
+    setItemForm(initialItemForm);
   };
 
   const handleOnDragEnd = result => {
@@ -209,7 +216,10 @@ export const MenuVariant = ({ variant, setVariant }) => {
 
   return (
     <>
-      <DragDropContext onDragEnd={handleOnDragEnd}>
+      <DragDropContext
+        onDragStart={handleOnDragStart}
+        onDragEnd={handleOnDragEnd}
+      >
         <Droppable droppableId="variant" type="droppableVariant">
           {(provided, _snapshot) => (
             <div
@@ -232,14 +242,14 @@ export const MenuVariant = ({ variant, setVariant }) => {
                         {...provided.dragHandleProps}
                       >
                         <div className="w-full bg-white px-3 py-2 rounded border">
-                          <div class="flex items-center justify-between">
+                          <div className="flex items-center justify-between mb-2">
                             <p className="text-sm">{variant.name}</p>
                             <a
                               href="#"
                               className="text-sm cursor-pointer hover:underline hover:text-red-600"
                               onClick={e => handleRemoveVariant(e, index)}
                             >
-                              X
+                              <IoCloseOutline />
                             </a>
                           </div>
                           <Droppable
@@ -279,7 +289,7 @@ export const MenuVariant = ({ variant, setVariant }) => {
                                                 handleRemoveItem(e, item.id)
                                               }
                                             >
-                                              X
+                                              <IoCloseOutline />
                                             </a>
                                           </div>
                                           {provided.placeholder}

@@ -11,7 +11,7 @@ import { OrderList } from './OrderList';
 import { Image } from '@/Shared/Image';
 
 const Detail = () => {
-  const { store, menuCategories } = usePage().props;
+  const { store, order, menuCategories } = usePage().props;
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [categories, setCategories] = useState(menuCategories);
@@ -69,11 +69,11 @@ const Detail = () => {
             </TrashedMessage>
           )}
 
-          <OrderList data={store.orders} />
+          <OrderList data={order} />
         </div>
         <div
-          className="w-full lg:w-2/5 overflow-y-auto rounded bg-gray-300 border-dashed border-4 border-gray-600 sticky top-0"
-          style={{ height: '427px' }}
+          className="w-full lg:w-2/4 overflow-y-auto rounded bg-gray-300 border-dashed border-4 border-gray-400 sticky top-0"
+          style={{ height: '502px' }}
         >
           <MenuCategory
             categories={categories}

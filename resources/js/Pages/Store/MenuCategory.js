@@ -3,11 +3,12 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Inertia } from '@inertiajs/inertia';
 import classNames from 'classnames';
 
-import { Modal } from '@/Shared/Modal';
 import { MenuItem } from './MenuItem';
 import { FormCategory } from './FormCategory';
 import { FormMenu } from './FormMenu';
 import { reorder } from '@/utils';
+
+import { IoAddOutline } from 'react-icons/io5';
 
 export const MenuCategory = ({
   categories,
@@ -245,7 +246,7 @@ export const MenuCategory = ({
                                 )
                               }
                             >
-                              Tambah Menu
+                              <IoAddOutline className="text-xl" />
                             </p>
                           </div>
                         </div>
@@ -280,39 +281,25 @@ export const MenuCategory = ({
         </Droppable>
       </DragDropContext>
 
-      <Modal
-        size="sm"
-        title={categoryValues.id == null ? 'Tambah Kategori' : 'Ubah Kategori'}
+      <FormCategory
         show={showCategoryModal}
         setShow={setShowCategoryModal}
-      >
-        <FormCategory
-          values={categoryValues}
-          setValues={setCategoryValues}
-          url={formCategoryUrl}
-          finish={finish}
-          refresh={refresh}
-        />
-      </Modal>
+        values={categoryValues}
+        setValues={setCategoryValues}
+        url={formCategoryUrl}
+        finish={finish}
+        refresh={refresh}
+      />
 
-      <Modal
-        title={
-          menuValues.id == null
-            ? 'Tambah Menu'
-            : `${menuValues.name} | Ubah` || 'Ubah Menu'
-        }
+      <FormMenu
         show={showMenuModal}
         setShow={setShowMenuModal}
-        noMargin={true}
-      >
-        <FormMenu
-          values={menuValues}
-          setValues={setMenuValues}
-          url={formMenuUrl}
-          finish={finish}
-          refresh={refresh}
-        />
-      </Modal>
+        values={menuValues}
+        setValues={setMenuValues}
+        url={formMenuUrl}
+        finish={finish}
+        refresh={refresh}
+      />
     </>
   );
 };
